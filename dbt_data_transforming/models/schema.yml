@@ -1,0 +1,57 @@
+version: 2
+
+models:
+  - name: df_track
+    description: "A dataframe containing information about tracks"
+    columns:
+      - name: track_id
+        description: "The unique identifier for a track"
+        tests:
+          - unique
+          - not_null
+      - name: type
+        description: "The type of vehicle that was used for the track"
+        tests:
+          - not_null
+      - name: traveled_distance
+        description: "The total distance traveled during the track"
+        tests:
+          - not_null
+          - greater_than_zero
+      - name: avg_speed
+        description: "The average speed during the track"
+        tests:
+          - not_null
+          - greater_than_zero
+
+  - name: cars
+    description: "A dbt model representing car tracks"
+    materialized: table
+    tests:
+      - dbt_expectations.expect_table_row_count_to_equal_other_table:
+          compare_model: df_track
+          factor: 1
+    config:
+      materialized: table
+
+    columns:
+      - name: track_id
+        description: "The unique identifier for a track"
+        tests:
+          - unique
+          - not_null
+      - name: type
+        description: "The type of vehicle that was used for the track"
+        tests:
+          - not_null
+          - equals: 'Car'
+      - name: traveled_distance
+        description: "The total distance traveled during the track"
+        tests:
+          - not_null
+          - greater_than_zero
+      - name: avg_speed
+        description: "The average speed during the track"
+        tests:
+          - not_null
+          - greater_than_zero
